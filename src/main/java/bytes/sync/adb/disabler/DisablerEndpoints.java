@@ -32,7 +32,7 @@ public class DisablerEndpoints {
     }
 
     @GetMapping(value = "/disabled/all")
-    public List<String> getAllDisabledPackages() {
+    public List<Package> getAllDisabledPackages() {
         return AdbHelper.getAllDisabledPackages();
     }
 

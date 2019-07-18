@@ -17,7 +17,7 @@ public class AdbHelper {
         AdbExecutioner.executeAdbCommand(AdbCommands.LIST_DEVICES);
     }
 
-    public static List<String> getAllDisabledPackages() {
+    public static List<Package> getAllDisabledPackages() {
         AdbExecutioner.executeAdbCommand(AdbCommands.LIST_DISABLED_PACKAGES);
         return null;
     }
