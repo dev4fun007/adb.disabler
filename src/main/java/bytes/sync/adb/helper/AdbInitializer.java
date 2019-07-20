@@ -24,39 +24,37 @@ public class AdbInitializer implements Runnable {
             if(hasStarted) {
                 //Now wait for device connection
                 String deviceInfo = AdbInitializer.waitForDevice();
+                System.out.println(deviceInfo);
                 //Device found - now enable reverse proxy config
                 AdbInitializer.enableAdbReverseProxy();
             }
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException | InterruptedException | IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static boolean initAdb() throws IllegalStateException {
-        String initStatement = AdbExecutioner.executeAdbCommand(AdbCommands.START_ADB);
-        if(initStatement.length() > 0) {
-            //Something printed - adb might be facing error while starting server
-            throw new IllegalStateException();
-        } else {
-            return true;
-        }
+    private static boolean initAdb() throws IllegalStateException, IOException, InterruptedException {
+        System.out.println("Starting adb server");
+        AdbHelper.startAdbServer();
+        return true;
     }
 
-    private static String waitForDevice() {
-        String deviceInfo = AdbExecutioner.executeAdbCommand(AdbCommands.WAIT_FOR_DEVICE);
+    private static String waitForDevice() throws IOException, InterruptedException {
+        System.out.println("Waiting for device");
+        AdbHelper.waitForDevice();
+
+        String deviceInfo = AdbHelper.listConnectedDevices();
         if(deviceInfo.contains("device")) {
-            //Device connected, returning the device info
             return deviceInfo;
         } else {
             return "No device found";
         }
     }
 
-    private static void enableAdbReverseProxy() {
-        AdbExecutioner.executeAdbCommand(AdbCommands.ENABLE_REVERSE_PORT_CONFIG);
+    private static void enableAdbReverseProxy() throws IOException, InterruptedException {
+        System.out.println("Enabling reverse proxy");
+        AdbHelper.enableReverseCommunication();
+        System.out.println("Reverse proxy enabled....Waiting for android app requests");
     }
 
-    private static void postStatus() {
-
-    }
 }

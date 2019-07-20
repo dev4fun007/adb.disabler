@@ -6,32 +6,22 @@ import java.io.InputStreamReader;
 
 class AdbExecutioner {
 
-    static String executeAdbCommand(String[] command) {
+    static String executeAdbCommand(String[] command) throws IOException, InterruptedException {
         StringBuilder lines = new StringBuilder();
         ProcessBuilder builder = new ProcessBuilder(command);
         builder.redirectErrorStream(true);
         Process p = null;
-        try {
-            p = builder.start();
-            BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String line;
-            while (true) {
-                try {
-                    line = r.readLine();
-                    if (line == null) {
-                        break;
-                    }
-                    lines.append(line);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return "[EXCEPTION] " + e.getMessage();
-                }
+        p = builder.start();
+        BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        String line;
+        while (true) {
+            line = r.readLine();
+            if (line == null) {
+                break;
             }
-            p.waitFor();
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return "[EXCEPTION] " + e.getMessage();
+            lines.append("\n").append(line);
         }
+        p.waitFor();
         return lines.toString();
     }
 }
